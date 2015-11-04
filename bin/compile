@@ -91,6 +91,11 @@ elif test -d $cache_dir/node/node_modules; then
     status "Node version changed since last build; rebuilding dependencies"
     npm rebuild 2>&1 | indent
   fi
+  
+  if test -d $cache_dir/node/bower_components; then
+    status "Restoring bower_components directory from cache"
+    cp -r $cache_dir/node/bower_components $build_dir/app/
+  fi
 
 fi
 
@@ -115,6 +120,7 @@ echo $node_version > $build_dir/.heroku/node-version
 # Purge node-related cached content, being careful not to purge the top-level
 # cache, for the sake of heroku-buildpack-multi apps.
 rm -rf $cache_dir/node_modules # (for apps still on the older caching strategy)
+rm -rf $cache_dir/bower_components
 rm -rf $cache_dir/node
 mkdir -p $cache_dir/node
 
@@ -122,6 +128,12 @@ mkdir -p $cache_dir/node
 if test -d $build_dir/node_modules; then
   status "Caching node_modules directory for future builds"
   cp -r $build_dir/node_modules $cache_dir/node
+fi
+
+# If app has a bower_components directory, cache it.
+if test -d $build_dir/app/bower_components; then
+  status "Caching bower_components directory for future builds"
+  cp -r $build_dir/app/bower_components $cache_dir/node
 fi
 
 # Copy goodies to the cache
@@ -146,8 +158,8 @@ if [ ! -e $build_dir/Procfile ]; then
   fi
 fi
 
-# install compass
-status "Installing Compass"
+# install sass
+status "Installing Sass"
 export GEM_HOME=$build_dir/.gem/ruby/2.0.0
 PATH="$GEM_HOME/bin:$PATH"
 if test -d $cache_dir/ruby/.gem; then
@@ -171,7 +183,7 @@ fi
 status "Building runtime environment"
 mkdir -p $build_dir/.profile.d
 echo "export PATH=\"\$HOME/vendor/node/bin:\$HOME/bin:\$HOME/node_modules/.bin:\$PATH\";" > $build_dir/.profile.d/nodejs.sh
-echo "export PATH=\"\$HOME/.gem/ruby/1.9.1/bin:\$PATH\"" > $build_dir/.profile.d/ruby.sh
+echo "export PATH=\"\$HOME/.gem/ruby/2.0.0/bin:\$PATH\"" > $build_dir/.profile.d/ruby.sh
 
 # Check and run Grunt
 (
