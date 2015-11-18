@@ -114,7 +114,7 @@ fi
 is_typescript_present= [ -f $build_dir/tsd.json ];
 if $is_typescript_present; then
   status "Found Typescript"
-  tsd intall 2>&1 | indent
+  ./node_modules/tsd/build/tsd intall 2>&1 | indent
 fi
 
 # Persist goodies like node-version in the slug
