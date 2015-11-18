@@ -111,6 +111,12 @@ fi
   npm install --userconfig $build_dir/.npmrc --production 2>&1 | indent
 )
 
+is_typescript_present = [ -f $build_dir/tsd.json ];
+if $is_typescript_present; then
+  status "Found Typescript"
+  tsd intall 2>&1 | indent
+fi
+
 # Persist goodies like node-version in the slug
 mkdir -p $build_dir/.heroku
 
