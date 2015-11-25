@@ -92,10 +92,10 @@ elif test -d $cache_dir/node/node_modules; then
     npm rebuild 2>&1 | indent
   fi
   
-  if test -d $cache_dir/node/bower_components; then
-    status "Restoring bower_components directory from cache"
-    cp -r $cache_dir/node/bower_components $build_dir/app/
-  fi
+  #if test -d $cache_dir/node/bower_components; then
+  #  status "Restoring bower_components directory from cache"
+  #  cp -r $cache_dir/node/bower_components $build_dir/app/
+  #fi
 
 fi
 
